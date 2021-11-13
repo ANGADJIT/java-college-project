@@ -1,0 +1,5 @@
+910
+600
+C:\Users\Asus\OneDrive\Desktop\hello.txt
+SANS_SERIF
+16
