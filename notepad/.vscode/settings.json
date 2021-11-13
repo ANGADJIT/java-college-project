@@ -2,5 +2,13 @@
     "java.project.sourcePaths": [
         "."
     ],
-    "java.dependency.packagePresentation": "hierarchical"
+    "java.dependency.packagePresentation": "hierarchical",
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar"
+        ],
+        "exclude": [
+            "c:\\Users\\Asus\\OneDrive\\Desktop\\fontchooser-master\\.mvn\\wrapper\\maven-wrapper.jar"
+        ]
+    }
 }

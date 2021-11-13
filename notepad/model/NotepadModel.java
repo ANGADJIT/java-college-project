@@ -14,6 +14,10 @@ import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class NotepadModel {
+
+    // * initial text
+    static String text = new String();
+
     // * setting map
     private final static HashMap<String, String> sMap = new HashMap<String, String>();
 
@@ -109,7 +113,7 @@ public class NotepadModel {
     }
 
     static public void setLastFileOpenedPath(String lastFileOpened) {
-        sMap.put("font_style", lastFileOpened);
+        sMap.put("last_file_opened", lastFileOpened);
     }
 
     // * method : to save details
@@ -123,7 +127,7 @@ public class NotepadModel {
             file.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            // * nothing to do
         }
     }
 
@@ -132,7 +136,7 @@ public class NotepadModel {
     public static void newFile(JTextArea textArea, JFrame frame) {
         textArea.setText("");
         frame.setTitle("Untitled");
-        sMap.put("last_file_opened", "C:");
+        setLastFileOpenedPath("");
     }
 
     public static void saveFile(JTextArea textArea, JFrame frame) {
@@ -148,11 +152,20 @@ public class NotepadModel {
                 file.close(); // * close file to save changes
 
                 frame.setTitle(fileChooser.getSelectedFile().getName());
+                setLastFileOpenedPath(fileChooser.getSelectedFile().getAbsolutePath() + ".txt");
             } catch (IOException e) {
                 // * nothing to do
             }
 
         }
+    }
+
+    public static void exit() {
+        System.exit(0);
+    }
+
+    public static void setText(String text) {
+        NotepadModel.text = text;
     }
 
     public static void openFile(JTextArea textArea, JFrame frame) {
@@ -172,7 +185,7 @@ public class NotepadModel {
                     textArea.append(sc.nextLine() + "\n");
                 }
 
-                sMap.put("last_file_opened", fileChooser.getSelectedFile().getAbsolutePath());
+                setLastFileOpenedPath(fileChooser.getSelectedFile().getAbsolutePath());
 
                 // * save settings
                 saveSettings();
@@ -184,8 +197,27 @@ public class NotepadModel {
         }
     }
 
+    public static void save(JTextArea textArea, JFrame frame) {
+        final File file = new File(getLastFileOpenedPath());
+
+        if (file.exists()) {
+            try {
+                final FileWriter writer = new FileWriter(file);
+                writer.write(textArea.getText());
+                writer.close();
+
+                frame.setTitle(frame.getTitle().substring(1));
+            } catch (IOException e) {
+                // * nothing to do
+            }
+        } else {
+            saveFile(textArea, frame);
+        }
+
+    }
+
     static public void loadFile(JTextArea textArea, JFrame frame) {
-        final File file = new File(sMap.get("last_file_opened"));
+        final File file = new File(getLastFileOpenedPath());
 
         Scanner sc;
 
@@ -199,14 +231,27 @@ public class NotepadModel {
 
                 frame.setTitle(file.getName());
             } catch (FileNotFoundException e) {
+                setLastFileOpenedPath("");
                 frame.setTitle("Untitled");
             }
 
         }
     }
 
-    public static void listenTextAreaChanges(JFrame frame) {
-        if (frame.getTitle().equals(frame.getTitle() + " *") == false)
-            frame.setTitle(frame.getTitle() + " *");
+    public static void changeTextAreaTitle(JFrame frame) {
+        if (frame.getTitle().contains("*") == false) {
+            frame.setTitle("*" + frame.getTitle());
+        }
+    }
+
+    public static void fontDailog(JTextArea textArea) {
+        LoadingFonts font = new LoadingFonts(textArea);
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.getContentPane().add(font.getPanel(), "North");
+        f.getContentPane().add(font.getLabel());
+        f.setSize(300, 180);
+        f.setLocation(200, 200);
+        f.setVisible(true);
     }
 }

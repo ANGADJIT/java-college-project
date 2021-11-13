@@ -5,6 +5,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.undo.UndoManager;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
@@ -15,10 +16,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
+import model.LoadingFonts;
 import model.NotepadModel;
 
 public class Notepad extends JFrame implements DocumentListener {
-
     public Notepad() {
 
         // * frame initials
@@ -33,7 +34,7 @@ public class Notepad extends JFrame implements DocumentListener {
             public void windowClosing(WindowEvent e) {
                 NotepadModel.setWidth(getSize().width);
                 NotepadModel.setHeight(getSize().height);
-                NotepadModel.setLastFileOpenedPath("");
+                NotepadModel.setLastFileOpenedPath(NotepadModel.getLastFileOpenedPath());
                 NotepadModel.setFontStyle("SANS_SERIF");
                 NotepadModel.setFontSize(16);
 
@@ -78,8 +79,12 @@ public class Notepad extends JFrame implements DocumentListener {
         final JMenu formatMenu = new JMenu("Format");
 
         final JMenuItem font = new JMenuItem("font");
+        final JMenuItem incrFontSize = new JMenuItem("increase size");
+        final JMenuItem dcrFontSize = new JMenuItem("decrease size");
 
         formatMenu.add(font);
+        formatMenu.add(incrFontSize);
+        formatMenu.add(dcrFontSize);
 
         jMenuBar.add(fileMenu);
         jMenuBar.add(editMenu);
@@ -93,6 +98,10 @@ public class Notepad extends JFrame implements DocumentListener {
         textArea.setLineWrap(true);
 
         textArea.getDocument().addDocumentListener(this);
+
+        final UndoManager manager = new UndoManager();
+
+        textArea.getDocument().addUndoableEditListener(manager);
 
         // * laod file
         NotepadModel.loadFile(textArea, this);
@@ -113,25 +122,70 @@ public class Notepad extends JFrame implements DocumentListener {
             NotepadModel.saveFile(textArea, this);
         });
 
+        save.addActionListener((e) -> {
+            NotepadModel.save(textArea, this);
+        });
+
         openFile.addActionListener((l) -> {
             NotepadModel.openFile(textArea, this);
         });
 
+        exit.addActionListener((e) -> {
+            NotepadModel.exit();
+        });
+
+        // * adding functions for second menu
+
+        undo.addActionListener((e) -> {
+            manager.undo();
+        });
+
+        redo.addActionListener((e) -> {
+            manager.redo();
+        });
+
+        copy.addActionListener((e) -> {
+            textArea.copy();
+        });
+
+        paste.addActionListener((e) -> {
+            textArea.paste();
+        });
+
+        cut.addActionListener((e) -> {
+            textArea.cut();
+        });
+
+        // * adding functions to third menu
+
+        font.addActionListener((e) -> {
+            NotepadModel.fontDailog(textArea);
+        });
+
+        incrFontSize.addActionListener((e) -> {
+            textArea.setFont(
+                    new Font(LoadingFonts.getFont().getFamily(), Font.PLAIN, LoadingFonts.getFont().getSize() + 1));
+        });
+
+        dcrFontSize.addActionListener((e) -> {
+            textArea.setFont(
+                    new Font(LoadingFonts.getFont().getFamily(), Font.PLAIN, LoadingFonts.getFont().getSize() - 1));
+        });
     }
 
     @Override
     public void insertUpdate(DocumentEvent e) {
-        NotepadModel.listenTextAreaChanges(this);
+        NotepadModel.changeTextAreaTitle(this);
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-        //* nothing to do 
+        // * nothing to do
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        //* nothing to do
+        // * nothing to do
     }
 
 }
