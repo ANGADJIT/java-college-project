@@ -1,6 +1,7 @@
 package screens;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.event.DocumentEvent;
@@ -12,6 +13,7 @@ import java.awt.BorderLayout;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
@@ -35,8 +37,6 @@ public class Notepad extends JFrame implements DocumentListener {
                 NotepadModel.setWidth(getSize().width);
                 NotepadModel.setHeight(getSize().height);
                 NotepadModel.setLastFileOpenedPath(NotepadModel.getLastFileOpenedPath());
-                NotepadModel.setFontStyle("SANS_SERIF");
-                NotepadModel.setFontSize(16);
 
                 NotepadModel.saveSettings();
             }
@@ -82,6 +82,12 @@ public class Notepad extends JFrame implements DocumentListener {
         final JMenuItem incrFontSize = new JMenuItem("increase size");
         final JMenuItem dcrFontSize = new JMenuItem("decrease size");
 
+        final JMenu about = new JMenu("About");
+
+        final JMenuItem aboutNotepad = new JMenuItem("about notepad");
+
+        about.add(aboutNotepad);
+
         formatMenu.add(font);
         formatMenu.add(incrFontSize);
         formatMenu.add(dcrFontSize);
@@ -89,6 +95,7 @@ public class Notepad extends JFrame implements DocumentListener {
         jMenuBar.add(fileMenu);
         jMenuBar.add(editMenu);
         jMenuBar.add(formatMenu);
+        jMenuBar.add(about);
 
         this.setJMenuBar(jMenuBar);
 
@@ -163,13 +170,22 @@ public class Notepad extends JFrame implements DocumentListener {
         });
 
         incrFontSize.addActionListener((e) -> {
-            textArea.setFont(
-                    new Font(LoadingFonts.getFont().getFamily(), Font.PLAIN, LoadingFonts.getFont().getSize() + 1));
+            textArea.setFont(new Font(LoadingFonts.getFont().getFamily(), Font.PLAIN, NotepadModel.getFontSize() + 1));
+            NotepadModel.setFontSize(NotepadModel.getFontSize() + 1);
+
         });
 
         dcrFontSize.addActionListener((e) -> {
-            textArea.setFont(
-                    new Font(LoadingFonts.getFont().getFamily(), Font.PLAIN, LoadingFonts.getFont().getSize() - 1));
+            textArea.setFont(new Font(LoadingFonts.getFont().getFamily(), Font.PLAIN, NotepadModel.getFontSize() - 1));
+            NotepadModel.setFontSize(NotepadModel.getFontSize() - 1);
+
+        });
+
+        // * adding function to forth menu
+        aboutNotepad.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(null, "Simple fully functional notepad written in java swing", "About Dialog",
+                    JOptionPane.PLAIN_MESSAGE, new ImageIcon(new ImageIcon("assets/icons/notepad.png").getImage()
+                            .getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
         });
     }
 

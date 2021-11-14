@@ -148,7 +148,7 @@ public class NotepadModel {
             try {
                 final FileWriter file = new FileWriter(fileChooser.getSelectedFile().getAbsolutePath() + ".txt");
                 file.write(textArea.getText());
-
+                
                 file.close(); // * close file to save changes
 
                 frame.setTitle(fileChooser.getSelectedFile().getName());
@@ -233,8 +233,12 @@ public class NotepadModel {
             } catch (FileNotFoundException e) {
                 setLastFileOpenedPath("");
                 frame.setTitle("Untitled");
+                saveSettings();
             }
-
+        } else {
+            setLastFileOpenedPath("");
+            frame.setTitle("Untitled");
+            saveSettings();
         }
     }
 
@@ -247,7 +251,7 @@ public class NotepadModel {
     public static void fontDailog(JTextArea textArea) {
         LoadingFonts font = new LoadingFonts(textArea);
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         f.getContentPane().add(font.getPanel(), "North");
         f.getContentPane().add(font.getLabel());
         f.setSize(300, 180);

@@ -9,7 +9,7 @@ public class LoadingFonts implements ActionListener {
     JLabel label;
     Font font;
 
-    static Font fontStore = new Font(NotepadModel.getFontStyle(),Font.PLAIN,NotepadModel.getFontSize());
+    static Font fontStore = new Font(NotepadModel.getFontStyle(), Font.PLAIN, NotepadModel.getFontSize());
 
     JTextArea textArea;
 
@@ -32,6 +32,7 @@ public class LoadingFonts implements ActionListener {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     setFont();
                     fontStore = font;
+                    NotepadModel.setFontStyle((String) fontCombo.getSelectedItem());
                 }
             }
 
