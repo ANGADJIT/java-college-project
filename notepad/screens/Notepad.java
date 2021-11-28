@@ -22,6 +22,9 @@ import model.LoadingFonts;
 import model.NotepadModel;
 
 public class Notepad extends JFrame implements DocumentListener {
+    // * textarea
+    final JTextArea textArea;
+
     public Notepad() {
 
         // * frame initials
@@ -30,18 +33,6 @@ public class Notepad extends JFrame implements DocumentListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
         this.setFont(new Font(NotepadModel.getFontStyle(), Font.PLAIN, NotepadModel.getFontSize()));
-
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                NotepadModel.setWidth(getSize().width);
-                NotepadModel.setHeight(getSize().height);
-                NotepadModel.setLastFileOpenedPath(NotepadModel.getLastFileOpenedPath());
-
-                NotepadModel.saveSettings();
-            }
-        });
-        ;
 
         // * menu bar and items
         final JMenuBar jMenuBar = new JMenuBar();
@@ -100,7 +91,7 @@ public class Notepad extends JFrame implements DocumentListener {
         this.setJMenuBar(jMenuBar);
 
         // * plain text field
-        final JTextArea textArea = new JTextArea();
+        textArea = new JTextArea();
         textArea.setFont(new Font(NotepadModel.getFontStyle(), Font.PLAIN, NotepadModel.getFontSize()));
         textArea.setLineWrap(true);
 
@@ -187,6 +178,29 @@ public class Notepad extends JFrame implements DocumentListener {
                     JOptionPane.PLAIN_MESSAGE, new ImageIcon(new ImageIcon("assets/icons/notepad.png").getImage()
                             .getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
         });
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                NotepadModel.setWidth(getSize().width);
+                NotepadModel.setHeight(getSize().height);
+                NotepadModel.setLastFileOpenedPath(NotepadModel.getLastFileOpenedPath());
+
+                saveFileBeforeExit();
+                NotepadModel.saveSettings();
+            }
+        });
+    }
+
+    private void saveFileBeforeExit() {
+        // * check file saved or not
+        if (getTitle().contains("*")) {
+            int result = JOptionPane.showConfirmDialog(null, "Do you want to save file ?");
+
+            if (result == JOptionPane.YES_OPTION) {
+                NotepadModel.save(textArea, this);
+            }
+        }
     }
 
     @Override

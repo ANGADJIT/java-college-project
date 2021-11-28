@@ -258,4 +258,5 @@ public class NotepadModel {
         f.setLocation(200, 200);
         f.setVisible(true);
     }
+
 }

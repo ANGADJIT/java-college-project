@@ -1,5 +1,5 @@
-991
+652
 687
 C:\Users\Asus\OneDrive\Documents\Angad.txt.txt
-Broadway
-16
+Arial Rounded MT Bold
+19
